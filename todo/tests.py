@@ -111,6 +111,22 @@ class TodoViewTestCase(TestCase):
 
         self.assertEqual(response.status_code, 404)
 
+    def test_close_post_success(self):
+        task = Task(title='task1', due_at=timezone.make_aware(datetime(2024, 7, 1)))
+        task.save()
+        client = Client()
+        response = client.post('/{}/close'.format(task.pk))
+
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, '/')
+        updated = Task.objects.get(pk=task.pk)
+        self.assertTrue(updated.completed)
+
+    def test_close_get_fail(self):
+        client = Client()
+        response = client.get('/1/close')
+
+        self.assertEqual(response.status_code, 404)
 
     def test_delete_task_success(self):
         task = Task(title='task1', due_at=timezone.make_aware(datetime(2024, 7, 1)))
@@ -127,8 +143,7 @@ class TodoViewTestCase(TestCase):
         client = Client()
         response = client.post('/1/delete')
         self.assertEqual(response.status_code, 404)
-        
-        
+
     def test_update_get_success(self):
         task = Task(title='task1', due_at=timezone.make_aware(datetime(2024, 7, 1)))
         task.save()
