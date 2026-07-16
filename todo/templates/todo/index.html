@@ -40,6 +40,7 @@
 <a href="{% url 'index' %}?order=post{% if query %}&q={{ query }}{% endif %}">Sort by Posted Date</a>
 </div>
 
+{% if tasks %}
 {% for task in tasks %}
 <div class="text">
 <h2><a href="{%url 'detail' task.id %}">{{ task.title }}</a></h2>
@@ -56,6 +57,9 @@
 </ul>
 </div>
 {% endfor %}
+{% else %}
+<p>該当する課題はありません</p>
+{% endif %}
 </body>
 
 </html>
